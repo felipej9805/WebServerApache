@@ -5,6 +5,9 @@
   become_user: root
   become_method: sudo
   tasks:
+    - name: update Machine
+      shell: apt-get update
+
     - name: install apache2
       apt:
         name: apache2
@@ -20,7 +23,7 @@
         - php
         - php-pgsql
         - libapache2-mod-php
-        - php7.3-mysql
+        
 
     - name: Allow Mysql extension
       shell: echo "extension=mysqli" >> /etc/php/7.3/apache2/php.ini
@@ -30,7 +33,7 @@
         name: git
         state: present
 
-    - name: Git Clone Repo
+    - name: Git Clone Repo WebServer 
       git: 
         repo: https://github.com/felipej9805/Apache-WebServer-PHP.git
         dest: '/var/www/html'
@@ -42,15 +45,59 @@
       shell: /etc/init.d/apache2 restart
 
         #database installation
-- hosts: database
-  become: yes
-  become_user: root
-  become_method: sudo
-  tasks:
-   
-    - name: "Installing  mysql server"
-      apt:
-        name: mysql-server
+#- hosts: database
+#  become: yes
+#  become_user: root
+#  become_method: sudo
+#  tasks:
+#     - name: "Installing apt dependencies"
+#       apt:
+#         name: "{{ item }}"
+#         update_cache: yes
+#       with_items:
+#         - libmysqlclient-dev
+#         - mysql-client
+#         - python-dev
+#         - python-pip
+#         - python-mysqldb
+#         - python3-pip
+
+
+#     - name: "Installing  mysql server"
+#       apt:
+#         name: mysql-server
+#    
+#     - name: Create a new database with name 'demodb'
+#       mysql_db:
+#         name: demodb
+#         state: present
+
+#     - name: "Creating mysql user"
+#       mysql_user:
+#         name: demouser
+#         password : demopassword
+#         priv: '*.*:ALL'
+#         host: '%'
+#         state: present
+#       notify: restart mysql
+  
+#     - name: Git Clone Repo Database Server
+#       git: 
+#         repo: https://github.com/felipej9805/Apache-WebServer-PHP.git
+#         dest: '/tmp/configuration'
+#         update: yes
+#         force: yes
+#         accept_hostkey: no
+
+#     - name: Create configuration for database
+#       mysql_db:
+#         state: import
+#         name: all
+#         target: /tmp/configuration/data.sql
+
+
+#     - name: Restart mysql service
+#       shell: /etc/init.d/mysql restart
 
   
     
