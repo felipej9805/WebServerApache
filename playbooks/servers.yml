@@ -9,19 +9,49 @@
       apt:
         name: apache2
         state: latest
-    - name: Copy remote file
-        shell: scp sistemasdistribuidos@192.168.130.198:/home/sistemasdistribuidos/Documentos/html /var/www/html
 
+    - name: Remove html directory
+      shell: rm -r /var/www/html
+      
+    - name: Installing php dependencies
+      apt:
+        name: "{{ item }}"
+      with_items:
+        - php
+        - php-pgsql
+        - libapache2-mod-php
+        - php7.3-mysql
+
+    - name: Allow Mysql extension
+      shell: echo "extension=mysqli" >> /etc/php/7.3/apache2/php.ini
+
+    - name: Install git
+      apt:
+        name: git
+        state: present
+
+    - name: Git Clone Repo
+      git: 
+        repo: https://github.com/felipej9805/Apache-WebServer-PHP.git
+        dest: '/var/www/html'
+        update: yes
+        force: yes
+        accept_hostkey: no
+      
+    - name: Restart apache service
+      shell: /etc/init.d/apache2 restart
 
         #database installation
-#- hosts: database
-#  become: yes
-#  become_user: root
-#  become_method: sudo
-#  tasks:
-#    - name: install apache2
-#      apt:
-#        name: apache2
-#        state: latest
+- hosts: database
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+   
+    - name: "Installing  mysql server"
+      apt:
+        name: mysql-server
+
+  
     
     
